@@ -5,9 +5,15 @@ namespace Microsoft.DocAsCode.Build.OverwriteDocuments
 {
     using System;
     using System.Collections.Generic;
+    using System.Text.RegularExpressions;
 
     public class OverwriteUtility
     {
+        private static readonly Regex OPathRegex =
+            new Regex(
+                @"^(?<propertyName>\w+)(\[(?<Key>\w+)=""(?<Value>[\w\(\)\.\{\}\[\]\|\*\^/~#@!`,_<>:]+)""\])?)[/$]",
+                RegexOptions.Compiled);
+
         public static List<OPathSegment> ParseOPath(string OPathString)
         {
             if (string.IsNullOrEmpty(OPathString))
@@ -15,40 +21,52 @@ namespace Microsoft.DocAsCode.Build.OverwriteDocuments
                 throw new ArgumentException("OPathString cannot be null or empty.", nameof(OPathString));
             }
 
-            var segments = OPathString.Split('/');
-            var OPathSegments = new List<OPathSegment>();
-            foreach (var segment in segments)
+            var match = OPathRegex.Match(OPathString);
+            if (match.Success)
             {
-                var index = segment.IndexOf('[');
-                switch (index)
-                {
-                    case -1:
-                        OPathSegments.Add(new OPathSegment
-                        {
-                            SegmentName = segment
-                        });
-                        break;
-                    case 0:
-                        throw new ArgumentException($"There is a invalid segment {segment}");
-                    default:
-                        var keyValue = segment.Substring(index).Trim('[', ']').Split('=');
-                        if (keyValue.Length == 2)
-                        {
-                            OPathSegments.Add(new OPathSegment
-                            {
-                                SegmentName = segment.Remove(index),
-                                key = keyValue[0].Trim(' '),
-                                Value = keyValue[1].Trim(' ', '"')
-                            });
-                        }
-                        else
-                        {
-                            throw new ArgumentException($"There is a invalid segment {segment}");
-                        }
-                        break;
-                }
+                return new List<OPathSegment>();
             }
-            return OPathSegments;
+            else
+            {
+                throw new ArgumentException($"{OPathString} is not a valid OPath");
+            }
+
+            //var segments = OPathString.Split('/');
+            //var OPathSegments = new List<OPathSegment>();
+            //foreach (var segment in segments)
+            //{
+            //    var index = segment.IndexOf('[');
+            //    switch (index)
+            //    {
+            //        case -1:
+            //            OPathSegments.Add(new OPathSegment
+            //            {
+            //                SegmentName = segment,
+            //                OriginalSegmentString = segment
+            //            });
+            //            break;
+            //        case 0:
+            //            throw new ArgumentException($"There is a invalid segment {segment}");
+            //        default:
+            //            var keyValue = segment.Substring(index).Trim('[', ']').Split('=');
+            //            if (keyValue.Length == 2)
+            //            {
+            //                OPathSegments.Add(new OPathSegment
+            //                {
+            //                    SegmentName = segment.Remove(index),
+            //                    key = keyValue[0].Trim(' '),
+            //                    Value = keyValue[1].Trim(' ', '"'),
+            //                    OriginalSegmentString = segment
+            //                });
+            //            }
+            //            else
+            //            {
+            //                throw new ArgumentException($"There is a invalid segment {segment}");
+            //            }
+            //            break;
+            //    }
+            //}
+            //return OPathSegments;
         }
     }
 }
