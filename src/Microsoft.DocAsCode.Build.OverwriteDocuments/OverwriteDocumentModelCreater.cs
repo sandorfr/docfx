@@ -17,17 +17,17 @@ namespace Microsoft.DocAsCode.Build.OverwriteDocuments
     {
         public static OverwriteDocumentModel Create(MarkdownFragmentModel model)
         {
-            var yamlCocdeBlockMetadata = ConvertYamlCodeBlock(model.YamlCodeBlock);
+            var yamlCocdeBlockMetadata = ConvertYamlCodeBlock(model.YamlCodeBlock, model.YamlCodeBlockSource);
             var contentsMetadata = ConvertContents(model.Contents);
-            contentsMetadata.ToList().ForEach(x => yamlCocdeBlockMetadata.Add(x.Key, x.Value));
             return new OverwriteDocumentModel
             {
                 Uid = model.Uid,
-                Metadata = contentsMetadata
+                Metadata = yamlCocdeBlockMetadata.Concat(contentsMetadata).GroupBy(p => p.Key)
+                    .ToDictionary(g => g.Key, g => g.Last().Value)
             };
         }
 
-        public static Dictionary<string, object> ConvertYamlCodeBlock(string yamlCodeBlock)
+        public static Dictionary<string, object> ConvertYamlCodeBlock(string yamlCodeBlock, Block yamlCodeBlockSource)
         {
             if (string.IsNullOrEmpty(yamlCodeBlock))
             {
