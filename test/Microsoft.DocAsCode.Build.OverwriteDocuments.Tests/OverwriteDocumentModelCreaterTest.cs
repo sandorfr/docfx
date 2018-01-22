@@ -21,7 +21,12 @@ namespace Microsoft.DocAsCode.Build.OverwriteDocuments.Tests
         public void YamlCodeBlockTest()
         {
             var yamlCodeBlockString = "a:b\nc:d\ne:f";
-            var actual = OverwriteDocumentModelCreater.ConvertYamlCodeBlock(yamlCodeBlockString);
+            var testYamlCodeBlock = Markdown.Parse(@"```
+a: b
+c:d
+e:f
+```")[0];
+            var actual = OverwriteDocumentModelCreater.ConvertYamlCodeBlock(yamlCodeBlockString, testYamlCodeBlock);
             var expected = new Dictionary<string, object>()
             {
                 {"a", "b"},
@@ -74,6 +79,30 @@ namespace Microsoft.DocAsCode.Build.OverwriteDocuments.Tests
 
         [Fact]
         public void DuplicateTest()
+        {
+            var testBlockList = Markdown.Parse("Test").ToList();
+            string[] testOPaths =
+            {
+                "function/parameters/description",
+                "function/parameters/description",
+            };
+            var contents = new List<MarkdownPropertyModel>();
+            foreach (var item in testOPaths)
+            {
+                contents.Add(new MarkdownPropertyModel
+                {
+                    PropertyName = item,
+                    PropertyNameSource = Markdown.Parse($"## `{item}`")[0],
+                    PropertyValue = testBlockList
+                });
+            }
+            var ex = Assert.Throws<MarkdownFragmentsException>(() => OverwriteDocumentModelCreater.ConvertContents(contents));
+            Assert.Equal("", ex.Message);
+            Assert.Equal(0, ex.Position);
+        }
+
+        [Fact]
+        public void InvalidOPathsTest1()
         {
             var testBlockList = Markdown.Parse("Test").ToList();
             string[] testOPaths =

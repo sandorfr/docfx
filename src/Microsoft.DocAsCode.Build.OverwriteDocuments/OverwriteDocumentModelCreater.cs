@@ -33,26 +33,35 @@ namespace Microsoft.DocAsCode.Build.OverwriteDocuments
             {
                 return new Dictionary<string, object>();
             }
+
             using (var reader = new StringReader(yamlCodeBlock))
             {
-                return YamlUtility.Deserialize<Dictionary<string,object>>(reader);;
+                try
+                {
+                    return YamlUtility.Deserialize<Dictionary<string, object>>(reader);
+                }
+                catch (Exception ex)
+                {
+                    throw new MarkdownFragmentsException(ex.Message, yamlCodeBlockSource.Line);
+                }
             }
         }
 
         public static Dictionary<string, object> ConvertContents(List<MarkdownPropertyModel> contents)
         {
             var contentsMetadata = new Dictionary<string, object>();
+            List<OPathSegment> OPathSegments;
             foreach (var content in contents)
             {
                 try
                 {
-                    var OPathSegments = OverwriteUtility.ParseOPath(content.PropertyName);
-                    AppendNewObject(OPathSegments, content.PropertyNameSource, content.PropertyValue, contentsMetadata);
+                    OPathSegments = OverwriteUtility.ParseOPath(content.PropertyName);
                 }
                 catch (ArgumentException ex)
                 {
                     throw new MarkdownFragmentsException(ex.Message, content.PropertyNameSource.Line);
                 }
+                AppendNewObject(OPathSegments, content.PropertyNameSource, content.PropertyValue, contentsMetadata);
             }
             return contentsMetadata;
         }
@@ -65,15 +74,14 @@ namespace Microsoft.DocAsCode.Build.OverwriteDocuments
             {
                 if (objectValue.ContainsKey(segment.SegmentName))
                 {
-                    if (segment.key != null)
+                    if (segment.Key != null)
                     {
                         var listObject = objectValue[segment.SegmentName] as List<Dictionary<string, object>>;
                         if (listObject != null && listObject.Count > 0)
                         {
                             var goodItems = (from item in listObject
-                                where item.ContainsKey(segment.key) &&
-                                      ((string) item[segment.key]).Equals(segment.Value,
-                                          StringComparison.OrdinalIgnoreCase)
+                                where item.ContainsKey(segment.Key) &&
+                                      item[segment.Key].ToString().Equals(segment.Value.ToString(), StringComparison.OrdinalIgnoreCase)
                                 select item).ToList();
                             if (goodItems.Count > 0)
                             {
@@ -90,7 +98,7 @@ namespace Microsoft.DocAsCode.Build.OverwriteDocuments
                         }
                         else
                         {
-                            // There is two OPath like this:
+                            // Throw exception if there is two OPath like this:
                             // A/B
                             // A[c=d]/C
                             var sameSegment = new List<OPathSegment>(OPathSegments);
@@ -109,14 +117,14 @@ namespace Microsoft.DocAsCode.Build.OverwriteDocuments
                         {
                             // Duplication
                             Logger.LogWarning(
-                                $"There is two duplicate OPath {OPathSegments.Select(o => o.OriginalSegmentString).Aggregate((a, b) => a + "/" + b)}, The ",
+                                $"There is two duplicate OPath {OPathSegments.Select(o => o.OriginalSegmentString).Aggregate((a, b) => a + "/" + b)}, the previous one will be overwrited",
                                 line: codeHeaderBlock.Line.ToString(),
                                 code: WarningCodes.Overwrite.InvalidOPaths);
                         }
                         else if (objectValue[segment.SegmentName] is List<Dictionary<string, object>>)
                         {
 
-                            // There is two OPath like this:
+                            // Throw exception if there is two OPath like this:
                             // A[c=d]/C
                             // A/B
                             var sameSegment = new List<OPathSegment>(OPathSegments);
@@ -156,9 +164,9 @@ namespace Microsoft.DocAsCode.Build.OverwriteDocuments
             for (int i = OPathSegments.Count - 2; i >= 0; i--)
             {
                 var segment = OPathSegments[i];
-                if (segment.key != null)
+                if (segment.Key != null)
                 {
-                    coreObject = AddToFirstOfDictionary(coreObject, new KeyValuePair<string, object>(segment.key, segment.Value));
+                    coreObject = AddToFirstOfDictionary(coreObject, new KeyValuePair<string, object>(segment.Key, segment.Value));
                     coreObject = new Dictionary<string, object>
                     {
                         {segment.SegmentName, new List<Dictionary<string, object>> {coreObject}}
