@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6A65A769-DAC3-4E99-96F9-991F4CE8D164}"
 EndProject
@@ -213,7 +213,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DocAsCode.Markdig
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MarkdownFragments", "MarkdownFragments", "{12B398BA-5002-40BE-A863-5B51FEB6EC68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YamlSplitter", "tools\YamlSplitter\YamlSplitter.csproj", "{2CA09972-F737-459A-A79E-EB96CC726200}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YamlSplitter", "tools\YamlSplitter\YamlSplitter.csproj", "{2CA09972-F737-459A-A79E-EB96CC726200}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MermaidRenderer", "MermaidRenderer", "{D27EA089-A4A7-4D8A-A522-0CBF5428D7F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.DocAsCode.Build.MermaidRenderer", "plugins\Microsoft.DocAsCode.Build.MermaidRenderer\Microsoft.DocAsCode.Build.MermaidRenderer.csproj", "{6DB66BA3-8FE8-4954-B82D-9709E39E982C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -743,6 +747,14 @@ Global
 		{2CA09972-F737-459A-A79E-EB96CC726200}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2CA09972-F737-459A-A79E-EB96CC726200}.Release|x86.ActiveCfg = Release|Any CPU
 		{2CA09972-F737-459A-A79E-EB96CC726200}.Release|x86.Build.0 = Release|Any CPU
+		{6DB66BA3-8FE8-4954-B82D-9709E39E982C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DB66BA3-8FE8-4954-B82D-9709E39E982C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DB66BA3-8FE8-4954-B82D-9709E39E982C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6DB66BA3-8FE8-4954-B82D-9709E39E982C}.Debug|x86.Build.0 = Debug|Any CPU
+		{6DB66BA3-8FE8-4954-B82D-9709E39E982C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DB66BA3-8FE8-4954-B82D-9709E39E982C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DB66BA3-8FE8-4954-B82D-9709E39E982C}.Release|x86.ActiveCfg = Release|Any CPU
+		{6DB66BA3-8FE8-4954-B82D-9709E39E982C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -846,6 +858,8 @@ Global
 		{DD9736B2-8AA2-44AE-B0B3-57510FF0D634} = {926A0726-B806-4215-82EF-AF8E22D0FACF}
 		{12B398BA-5002-40BE-A863-5B51FEB6EC68} = {5AED685E-6E0F-451D-AD5E-F88B0BE74ACD}
 		{2CA09972-F737-459A-A79E-EB96CC726200} = {12B398BA-5002-40BE-A863-5B51FEB6EC68}
+		{D27EA089-A4A7-4D8A-A522-0CBF5428D7F5} = {DF2BA00B-1742-4F84-A469-08D7F019498E}
+		{6DB66BA3-8FE8-4954-B82D-9709E39E982C} = {D27EA089-A4A7-4D8A-A522-0CBF5428D7F5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6C12271F-8093-4D5D-8BEE-3318BFE40E23}
