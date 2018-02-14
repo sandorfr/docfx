@@ -31,7 +31,7 @@ namespace Microsoft.DocAsCore.Build.MermaidRenderer
 
             string arguments = $"-i \"{tempInput}\" -o \"{tempOutput}\" {additionalArguments}";
 
-            var mmdcStartInfo = new ProcessStartInfo(@"mmdc", arguments) // should probably look for a valid install and render a message
+            var mmdcStartInfo = new ProcessStartInfo(@"mmdc.cmd", arguments) // should probably look for a valid install and render a message
             {
                 CreateNoWindow = true,
                 WindowStyle = ProcessWindowStyle.Hidden
